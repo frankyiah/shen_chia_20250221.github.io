@@ -13,7 +13,7 @@
             padding: 20px;
         }
         h1 {
-            font-size: 48px; /* 放大字體 */
+            font-size: 48px;
             margin-bottom: 40px;
         }
         .time-table {
@@ -23,31 +23,36 @@
             max-width: 800px;
         }
         .time-table th, .time-table td {
-            padding: 15px; /* 放大表格內容的間距 */
+            padding: 15px;
             border: 1px solid #ddd;
             text-align: center;
         }
         .time-table th {
             background-color: #4CAF50;
-            font-size: 24px; /* 放大標題字體 */
+            font-size: 24px;
         }
         .time-table tr:nth-child(even) {
             background-color: #f2f2f2;
         }
         .time-table td {
-            font-size: 28px; /* 放大時間顯示的字體 */
+            font-size: 28px;
         }
         .select-country {
             margin: 20px auto;
-            padding: 15px; /* 放大選單的間距 */
-            font-size: 20px; /* 放大選單字體 */
+            padding: 15px;
+            font-size: 20px;
             border-radius: 5px;
             border: 1px solid #ddd;
             width: 250px;
             background-color: #fff;
             color: #333;
         }
+        #map {
+            height: 400px;
+            margin-top: 30px;
+        }
     </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
     <h1>全球時區時間</h1>
@@ -69,17 +74,17 @@
     <!-- 國家選擇下拉選單 -->
     <h2>選擇國家顯示當地時間</h2>
     <select id="country-select" class="select-country">
-        <option value="Asia/Taipei">台灣</option>
-        <option value="Asia/Shanghai">中國</option>
-        <option value="America/New_York">美國 (東部時間)</option>
-        <option value="America/Los_Angeles">美國 (西部時間)</option>
-        <option value="Europe/Moscow">俄羅斯</option>
-        <option value="Asia/Tokyo">日本</option>
-        <option value="Asia/Seoul">韓國</option>
-        <option value="Europe/London">英國</option>
-        <option value="Europe/Paris">法國</option>
-        <option value="Europe/Berlin">德國</option>
-        <option value="Australia/Sydney">澳大利亞</option>
+        <option value="Asia/Taipei" data-lat="23.6978" data-lng="120.9605">台灣</option>
+        <option value="Asia/Shanghai" data-lat="31.2304" data-lng="121.4737">中國</option>
+        <option value="America/New_York" data-lat="40.7128" data-lng="-74.0060">美國 (東部時間)</option>
+        <option value="America/Los_Angeles" data-lat="34.0522" data-lng="-118.2437">美國 (西部時間)</option>
+        <option value="Europe/Moscow" data-lat="55.7558" data-lng="37.6176">俄羅斯</option>
+        <option value="Asia/Tokyo" data-lat="35.6762" data-lng="139.6503">日本</option>
+        <option value="Asia/Seoul" data-lat="37.5665" data-lng="126.9780">韓國</option>
+        <option value="Europe/London" data-lat="51.5074" data-lng="-0.1278">英國</option>
+        <option value="Europe/Paris" data-lat="48.8566" data-lng="2.3522">法國</option>
+        <option value="Europe/Berlin" data-lat="52.5200" data-lng="13.4050">德國</option>
+        <option value="Australia/Sydney" data-lat="-33.8688" data-lng="151.2093">澳大利亞</option>
     </select>
 
     <!-- 顯示選擇國家的時間 -->
@@ -96,6 +101,10 @@
         </tbody>
     </table>
 
+    <!-- 地圖顯示區域 -->
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
         // 格式化時間的函式
         function formatTime(timezone) {
@@ -122,15 +131,35 @@
             const selectedCountry = document.getElementById("country-select").value;
             const selectedCountryTime = formatTime(selectedCountry);
             document.getElementById("selected-country-time").textContent = selectedCountryTime;
+            
+            // 更新地圖
+            const selectedOption = document.querySelector(`#country-select option[value="${selectedCountry}"]`);
+            const lat = selectedOption.getAttribute('data-lat');
+            const lng = selectedOption.getAttribute('data-lng');
+            updateMap(lat, lng);
         }
 
+        // 更新地圖顯示
+        function updateMap(lat, lng) {
+            if (map) {
+                map.setView([lat, lng], 5);
+                marker.setLatLng([lat, lng]);
+            }
+        }
+
+        // 初始化 Leaflet 地圖
+        const map = L.map('map').setView([23.6978, 120.9605], 2); // 預設是台灣位置
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        const marker = L.marker([23.6978, 120.9605]).addTo(map); // 預設台灣位置的標記
+
         // 每1秒鐘更新一次台灣時間和選擇國家時間
-        setInterval(function() {
+        setInterval(function () {
             updateTaiwanTime();
             updateSelectedCountryTime();
         }, 1000);
 
-        // 當選擇國家時更新當地時間
+        // 當選擇國家時更新當地時間與地圖
         document.getElementById("country-select").addEventListener("change", updateSelectedCountryTime);
 
         // 頁面加載時顯示台灣時間和選擇國家時間
