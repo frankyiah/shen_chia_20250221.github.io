@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全球時區時間</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ff8c00, #e52e71);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 48px; /* 放大字體 */
+            margin-bottom: 40px;
+        }
+        .time-table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            max-width: 800px;
+        }
+        .time-table th, .time-table td {
+            padding: 15px; /* 放大表格內容的間距 */
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        .time-table th {
+            background-color: #4CAF50;
+            font-size: 24px; /* 放大標題字體 */
+        }
+        .time-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .time-table td {
+            font-size: 28px; /* 放大時間顯示的字體 */
+        }
+        .select-country {
+            margin: 20px auto;
+            padding: 15px; /* 放大選單的間距 */
+            font-size: 20px; /* 放大選單字體 */
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            width: 250px;
+            background-color: #fff;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>全球時區時間</h1>
+
+    <!-- 台灣時間表格 -->
+    <table class="time-table">
+        <thead>
+            <tr>
+                <th>台灣當前時間</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="taiwan-time">載入中...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 國家選擇下拉選單 -->
+    <h2>選擇國家顯示當地時間</h2>
+    <select id="country-select" class="select-country">
+        <option value="Asia/Taipei">台灣</option>
+        <option value="Asia/Shanghai">中國</option>
+        <option value="America/New_York">美國 (東部時間)</option>
+        <option value="America/Los_Angeles">美國 (西部時間)</option>
+        <option value="Europe/Moscow">俄羅斯</option>
+        <option value="Asia/Tokyo">日本</option>
+        <option value="Asia/Seoul">韓國</option>
+        <option value="Europe/London">英國</option>
+        <option value="Europe/Paris">法國</option>
+        <option value="Europe/Berlin">德國</option>
+        <option value="Australia/Sydney">澳大利亞</option>
+    </select>
+
+    <!-- 顯示選擇國家的時間 -->
+    <table class="time-table">
+        <thead>
+            <tr>
+                <th>選擇國家當地時間</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="selected-country-time">請選擇國家...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        // 格式化時間的函式
+        function formatTime(timezone) {
+            const options = {
+                timeZone: timezone,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+            const time = new Date();
+            const formatter = new Intl.DateTimeFormat('en-US', options);
+            return formatter.format(time);
+        }
+
+        // 更新台灣時間的函式
+        function updateTaiwanTime() {
+            const taiwanTime = formatTime('Asia/Taipei');
+            document.getElementById("taiwan-time").textContent = taiwanTime;
+        }
+
+        // 更新選擇國家時間的函式
+        function updateSelectedCountryTime() {
+            const selectedCountry = document.getElementById("country-select").value;
+            const selectedCountryTime = formatTime(selectedCountry);
+            document.getElementById("selected-country-time").textContent = selectedCountryTime;
+        }
+
+        // 每1秒鐘更新一次台灣時間和選擇國家時間
+        setInterval(function() {
+            updateTaiwanTime();
+            updateSelectedCountryTime();
+        }, 1000);
+
+        // 當選擇國家時更新當地時間
+        document.getElementById("country-select").addEventListener("change", updateSelectedCountryTime);
+
+        // 頁面加載時顯示台灣時間和選擇國家時間
+        updateTaiwanTime();
+        updateSelectedCountryTime();
+    </script>
+</body>
+</html>
