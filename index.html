@@ -48,7 +48,7 @@
             color: #333;
         }
         #map {
-            height: 400px;
+            height: 800px; /* 增加地圖高度 */
             margin-top: 30px;
         }
     </style>
@@ -146,7 +146,7 @@
         }
 
         // 初始化 Leaflet 地圖，固定視圖為全世界範圍
-        const map = L.map('map').setView([0, 0], 2); // 初始設置為全球範圍
+        const map = L.map('map').setView([0, 0], 3); // 修改縮放級別為 3，顯示更大的範圍
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
         const marker = L.marker([0, 0]).addTo(map); // 初始標記位置為0,0
