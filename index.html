@@ -141,17 +141,22 @@
 
         // 更新地圖顯示
         function updateMap(lat, lng) {
-            if (map) {
-                map.setView([lat, lng], 5);
-                marker.setLatLng([lat, lng]);
-            }
+            // 更新標記位置
+            marker.setLatLng([lat, lng]);
         }
 
-        // 初始化 Leaflet 地圖
-        const map = L.map('map').setView([23.6978, 120.9605], 2); // 預設是台灣位置
+        // 初始化 Leaflet 地圖，固定視圖為全世界範圍
+        const map = L.map('map').setView([0, 0], 2); // 初始設置為全球範圍
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-        const marker = L.marker([23.6978, 120.9605]).addTo(map); // 預設台灣位置的標記
+        const marker = L.marker([0, 0]).addTo(map); // 初始標記位置為0,0
+
+        // 禁用地圖縮放和拖動
+        map.dragging.disable();
+        map.touchZoom.disable();
+        map.scrollWheelZoom.disable();
+        map.boxZoom.disable();
+        map.keyboard.disable();
 
         // 每1秒鐘更新一次台灣時間和選擇國家時間
         setInterval(function () {
